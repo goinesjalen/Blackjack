@@ -119,7 +119,7 @@ function displayHand(hand, elementId) {
         cardContainer.classList.add('card-container');
 
         const img = document.createElement('img');
-        img.src = `/BlackjackV3/png/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
+        img.src = `/Blackjack/png/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
         img.classList.add('card');
         cardContainer.appendChild(img);
 
