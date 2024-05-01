@@ -187,3 +187,53 @@
     border-color: #333;
     outline: none;
 }
+
+.container {
+    height: 50px;
+    width: 500px;
+    border-radius: 1em;
+    font-family: sans-serif;
+}
+
+.palette {
+    display: flex;
+    height: 86%;
+    width: 100%;
+}
+
+.color {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: flex 0.1s linear;
+}
+
+.color span {
+    opacity: 0;
+    transition: opacity 0.1s linear;
+}
+
+.color:hover {
+    flex: 2;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.color:hover span {
+    opacity: 1;
+}
+
+#stats {
+    width: 100%;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5em;
+    box-sizing: border-box;
+    color: #bebebe;
+}

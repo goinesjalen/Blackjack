@@ -76,7 +76,7 @@ function startGame(betAmount) {
         alert("Please enter a valid bet amount.");
         return;
     }
-    
+
     bet = betAmount;
 
     gameStarted = true; // Toggle gameStarted variable
@@ -171,25 +171,37 @@ function endGame() {
     const dealerTotal = calculateHandValue(dealerHand);
 
     let message = '';
+    let outcomeColor = '';
+    let outcomeText = '';
 
     if (playerTotal > 21) {
         balance -= bet;
         updateBalance(balance);
         message = 'Player Busts! Dealer Wins!';
+        outcomeColor = 'red';
+        outcomeText = 'L';
     } else if (dealerTotal > 21) {
         balance += bet;
         updateBalance(balance);
         message = 'Dealer Busts! Player Wins!';
+        outcomeColor = 'green';
+        outcomeText = 'W';
     } else if (playerTotal === dealerTotal) {
         message = 'Push!';
+        outcomeColor = 'grey';
+        outcomeText = '?';
     } else if (playerTotal > dealerTotal) {
         balance += bet;
         updateBalance(balance);
         message = 'Player Wins!';
+        outcomeColor = 'green';
+        outcomeText = 'W';
     } else {
         balance -= bet;
         updateBalance(balance);
         message = 'Dealer Wins!';
+        outcomeColor = 'red';
+        outcomeText = 'L';
     }
 
     const endMessageDiv = document.createElement('div');
@@ -198,6 +210,27 @@ function endGame() {
     endMessageDiv.classList.add('end-message-div');
     document.getElementById('playing-area').appendChild(endMessageDiv);
     updateDisplay();
+
+    // Append the outcome element to 'last10GamesList'
+    const outcomeElement = document.createElement('div');
+    outcomeElement.classList.add('color');
+    outcomeElement.style.background = outcomeColor;
+    outcomeElement.style.border = '1.5px solid #333';
+    const spanElement = document.createElement('span');
+    spanElement.textContent = outcomeText;
+    outcomeElement.appendChild(spanElement);
+
+    // Check if there are already ten elements in 'last10GamesList', remove the oldest one if there are
+    const last10GamesList = document.getElementById('last10GamesList');
+    if (last10GamesList.children.length >= 10) {
+        last10GamesList.removeChild(last10GamesList.children[last10GamesList.children.length - 2]);
+    }
+
+    // Insert the outcomeElement before the last child
+    last10GamesList.appendChild(outcomeElement);
+
+    const last10GamesListContainer = document.getElementById('last10GamesListContainer');
+    last10GamesListContainer.style.display = 'block';
 
     setTimeout(() => {
         endMessageDiv.style.display = 'none';
