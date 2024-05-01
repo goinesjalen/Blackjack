@@ -1,0 +1,189 @@
+#playing-area {
+    background-color: #1a7a42;
+    /* Light green color */
+    padding: 20px;
+    /* Add some padding around the playing area */
+    display: flex;
+    justify-content: center;
+    /* Center the content horizontally */
+    align-items: center;
+    /* Center the content vertically */
+    overflow: auto;
+    /* Enable scrolling if the content overflows */
+    flex-wrap: wrap;
+    /* Allow child elements to wrap onto multiple lines */
+    flex-direction: column;
+    /* Stack hands vertically */
+}
+
+#player-hand,
+#dealer-hand {
+    padding: 5px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    /* Added to allow wrapping */
+}
+
+.end-message-div {
+    display: inline-block;
+    padding: 12px 28px;
+    margin: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #333;
+    /* Dark grey background color */
+    border: none;
+    border-radius: 40px;
+}
+
+.card-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    /* White background color for the card */
+    padding: 10px;
+    /* Add some padding around the card */
+    border-radius: 5px;
+    /* Add rounded corners to the card */
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    /* Add a slight shadow to the card */
+}
+
+.card {
+    margin-bottom: 5px;
+}
+
+.button {
+    display: inline-block;
+    padding: 12px 28px;
+    margin: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #333;
+    /* Dark grey background color */
+    border: none;
+    border-radius: 40px;
+    box-shadow: 0px 4px 0px #111;
+    /* Dark grey shadow */
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 0px #111;
+    /* Dark grey shadow */
+}
+
+.button:active {
+    transform: translateY(0px);
+    box-shadow: none;
+    background-color: #555;
+    /* Dark grey background color */
+}
+
+.button:before,
+.button:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.button:before {
+    top: -3px;
+    left: -3px;
+    border-radius: 40px;
+    border-top: 3px solid #fff;
+    border-left: 3px solid #fff;
+}
+
+.button:after {
+    bottom: -3px;
+    right: -3px;
+    border-radius: 40px;
+    border-bottom: 3px solid #fff;
+    border-right: 3px solid #fff;
+}
+
+.hand-total-display {
+    width: 190px;
+    height: 254px;
+    border-radius: 30px;
+    background: #333;
+    color: #fff;
+    font-size: 24px;
+    text-align: center;
+    margin: 10px;
+    padding-top: 20px;
+}
+
+#options-bar {
+    padding: 5px;
+}
+
+/* Navigation bar styles */
+.navbar {
+    background-color: #333;
+    /* Dark background color */
+    color: #fff;
+    /* White text color */
+    height: 60px;
+    /* Adjust height */
+    width: 100%;
+    /* Span full page horizontally */
+    padding: 5px 20px;
+    /* Add padding */
+    box-sizing: border-box;
+    /* Include padding in the height */
+    display: flex;
+    /* Use flexbox to center content vertically */
+    align-items: center;
+    /* Center content vertically */
+}
+
+/* Balance styles */
+.balance {
+    font-size: 18px;
+    /* Adjust font size */
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    min-height: 50px;
+    max-width: 150px;
+    padding: 0 1rem;
+    font-size: 15px;
+    border: 1px solid #333;
+    border-radius: 6px 0 0 6px;
+    background-color: #fff;
+}
+
+.button--submit {
+    min-height: 50px;
+    padding: .5em 1em;
+    border: none;
+    border-radius: 0 6px 6px 0;
+    background-color: #333;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+}
+
+.input:focus,
+.input:focus-visible {
+    border-color: #333;
+    outline: none;
+}

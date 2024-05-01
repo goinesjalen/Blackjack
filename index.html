@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <script src="blackjack.js"></script>
+    <div class="navbar">
+        <div class="balance" id="balance"></div>
+    </div>
+    <div id="playing-area">
+        <div id="dealer-hand"></div>
+        <div id="player-hand"></div>
+        <div id="options-bar">
+            <div id="start-button-container">
+                <div class="input-group">
+                    <input class="input" id="bet" placeholder="0.00" autocomplete="off">
+                    <input class="button--submit" value="Bet!" type="submit" onclick="startGame(parseInt(document.getElementById('bet').value))">
+                </div>
+            </div>
+            <div id="game-button-container" style="display: none;">
+                <button onclick="hit(playerHand)" class="button">Hit</button>
+                <button onclick="stand()" class="button">Stand</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            updateBalance(500);
+        });
+    </script>
+</body>
+
+</html>
