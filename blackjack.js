@@ -2,6 +2,7 @@
 let balance = 500;
 let bet = 0;
 let gameStarted = false;
+let playerStood = false;
 let deck = [];
 const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
@@ -79,7 +80,8 @@ function startGame(betAmount) {
 
     bet = betAmount;
 
-    gameStarted = true; // Toggle gameStarted variable
+    gameStarted = true; // set gameStarted variable
+    playerStood = false; // Set playerStood variable
     const startButtonContainer = document.getElementById('start-button-container');
     const gameButtonContainer = document.getElementById('game-button-container');
     startButtonContainer.style.display = gameStarted ? 'none' : 'block'; // Hide or show the start button based on gameStarted variable
@@ -97,12 +99,45 @@ function startGame(betAmount) {
 
 // Function to update the display
 function updateDisplay() {
-    displayHand(dealerHand, 'dealer-hand');
+    if (gameStarted && playerStood) {
+        displayHand(dealerHand, 'dealer-hand');
+    } else {
+        // Otherwise, only display the dealer's first card and its total value
+        displayFirstDealerCard();
+    }
     displayHand(playerHand, 'player-hand');
+}
+
+function displayFirstDealerCard() {
+    const handDiv = document.getElementById('dealer-hand');
+    handDiv.innerHTML = '';
+
+    // Display total value with the first card only
+    const firstCard = dealerHand[0]; // Move the declaration of firstCard here
+    const totalDisplay = document.createElement('div');
+    totalDisplay.classList.add('hand-total-display');
+    totalDisplay.innerHTML = `<strong>Dealer</strong><br><br><span style="text-align: left;">Total Value: ${getCardValue(firstCard)}</span>`;
+    handDiv.appendChild(totalDisplay);
+
+    // Display only the first card of the dealer
+    const cardContainer = document.createElement('div');
+    cardContainer.classList.add('card-container');
+
+    const img = document.createElement('img');
+    img.src = `/Blackjack/png/${firstCard.value.toLowerCase()}_of_${firstCard.suit.toLowerCase()}.png`;
+    img.classList.add('card');
+    cardContainer.appendChild(img);
+
+    const cardName = document.createElement('div');
+    cardName.textContent = `${firstCard.value} of ${firstCard.suit}`;
+    cardContainer.appendChild(cardName);
+
+    handDiv.appendChild(cardContainer);
 }
 
 // Function to display a hand with card images and total value
 function displayHand(hand, elementId) {
+    console.log(elementId)
     const handDiv = document.getElementById(elementId);
     handDiv.innerHTML = '';
 
@@ -141,6 +176,8 @@ function hit(hand) {
 }
 
 function stand() {
+    playerStood = true;
+    updateDisplay();
     while (calculateHandValue(dealerHand) < 17 || (calculateHandValue(dealerHand) === 17 && hasSoft17(dealerHand))) {
         dealerHand.push(dealCard());
         updateDisplay();
@@ -162,10 +199,9 @@ function hasSoft17(hand) {
 
 // Function to end the game
 function endGame() {
-    gameStarted = false;
 
-    document.getElementById('start-button-container').style.display = gameStarted ? 'none' : 'block'; // Hide or show the start button based on gameStarted variable
-    document.getElementById('game-button-container').style.display = gameStarted ? 'block' : 'none'; // Hide or show the game button(s) based on gameStarted variable
+    document.getElementById('start-button-container').style.display = 'block'; // Hide or show the start button based on gameStarted variable
+    document.getElementById('game-button-container').style.display = 'none'; // Hide or show the game button(s) based on gameStarted variable
 
     const playerTotal = calculateHandValue(playerHand);
     const dealerTotal = calculateHandValue(dealerHand);
@@ -205,7 +241,7 @@ function endGame() {
     }
 
     const endMessageDiv = document.createElement('div');
-    endMessageDiv.style.display = gameStarted ? 'none' : 'block';
+    endMessageDiv.style.display = playerStood = 'block';
     endMessageDiv.textContent = message;
     endMessageDiv.classList.add('end-message-div');
     document.getElementById('playing-area').appendChild(endMessageDiv);
@@ -225,6 +261,8 @@ function endGame() {
     if (last10GamesList.children.length >= 10) {
         last10GamesList.removeChild(last10GamesList.children[last10GamesList.children.length - 2]);
     }
+
+    gameStarted = false
 
     // Insert the outcomeElement before the last child
     last10GamesList.appendChild(outcomeElement);
