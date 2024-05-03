@@ -80,8 +80,8 @@ function doubleDown(hand) {
 
     bet = bet * 2
 
-    hit(hand);
-
+    hand.push(dealCard());
+    updateDisplay();
     endGame();
 }
 
@@ -197,7 +197,9 @@ function hit(hand) {
     updateDisplay();
     if (calculateHandValue(hand) >= 21) {
         endGame();
+        return true;
     }
+    return false;
 }
 
 function stand() {
@@ -300,7 +302,7 @@ async function endGame() {
         last10GamesList.removeChild(last10GamesList.children[last10GamesList.children.length - 2]);
     }
 
-    gameStarted = false
+    gameStarted = false;
 
     // Insert the outcomeElement before the last child
     last10GamesList.appendChild(outcomeElement);
