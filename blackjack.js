@@ -198,7 +198,7 @@ function hasSoft17(hand) {
 }
 
 // Function to end the game
-function endGame() {
+async function endGame() {
 
     document.getElementById('start-button-container').style.display = 'block'; // Hide or show the start button based on gameStarted variable
     document.getElementById('game-button-container').style.display = 'none'; // Hide or show the game button(s) based on gameStarted variable
@@ -246,6 +246,19 @@ function endGame() {
     endMessageDiv.classList.add('end-message-div');
     document.getElementById('playing-area').appendChild(endMessageDiv);
     updateDisplay();
+
+    const gameOutcomeData = {
+        result: outcomeText >= 0 ? 'W' : 'L', // 'W' for win, 'L' for loss
+        description: message, // 'Player Busts! Dealer Wins!', etc.
+        wager: outcomeText // The amount won/lost
+    };
+
+    try {
+        const response = await axios.post('https://sheetdb.io/api/v1/0kmejh0iur6l8', gameOutcomeData);
+        console.log(response.data); // Log the response from the API (optional)
+    } catch (error) {
+        console.error('Error posting game outcome data:', error);
+    }
 
     // Append the outcome element to 'last10GamesList'
     const outcomeElement = document.createElement('div');
