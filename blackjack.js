@@ -73,6 +73,12 @@ function updateBalance(balance) {
 
 // Function to start the game
 function startGame(betAmount) {
+
+    if (balance === 0) {
+        alert("You are broke! Please refresh the page for a new balance.");
+        return;
+    }
+    
     if (isNaN(betAmount) || betAmount <= 0) {
         alert("Please enter a valid bet amount.");
         return;
