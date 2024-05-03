@@ -78,6 +78,11 @@ function startGame(betAmount) {
         return;
     }
 
+    if (betAmount > balance) {
+        alert("You cannot bet more than your current balance.");
+        return;
+    }
+
     bet = betAmount;
 
     gameStarted = true; // set gameStarted variable
