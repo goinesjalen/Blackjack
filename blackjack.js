@@ -71,6 +71,20 @@ function updateBalance(balance) {
     balanceDocument.innerText = `Balance: $${balance}`; // Assuming balance is a numeric value
 }
 
+// Function to double down
+function doubleDown(hand) {
+    if(bet * 2 > balance){
+        alert("You cannot bet more than your current balance.");
+        return;
+    }
+
+    bet = bet * 2
+
+    hit(hand);
+
+    endGame();
+}
+
 // Function to start the game
 function startGame(betAmount) {
 
@@ -78,7 +92,7 @@ function startGame(betAmount) {
         alert("You are broke! Please refresh the page for a new balance.");
         return;
     }
-    
+
     if (isNaN(betAmount) || betAmount <= 0) {
         alert("Please enter a valid bet amount.");
         return;
@@ -181,7 +195,7 @@ function displayHand(hand, elementId) {
 function hit(hand) {
     hand.push(dealCard());
     updateDisplay();
-    if (calculateHandValue(hand) > 21) {
+    if (calculateHandValue(hand) >= 21) {
         endGame();
     }
 }
