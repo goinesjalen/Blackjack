@@ -1,7 +1,6 @@
 // Define the deck of cards
 let balance = 500;
 let bet = [0];
-let currentHand = 0;
 let gameStarted = false;
 let deck = [];
 const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
@@ -94,6 +93,22 @@ function sumOfAllBets() {
 // Function to start the game
 function startGame(betAmount) {
 
+    var playerHand1 = document.getElementById('player-hand-0');
+    var playerHand2 = document.getElementById('player-hand-1');
+    var playerHand3 = document.getElementById('player-hand-2');
+
+    if (playerHand1) {
+        playerHand1.innerHTML = '';
+    }
+
+    if (playerHand2) {
+        playerHand2.innerHTML = '';
+    }
+
+    if (playerHand3) {
+        playerHand3.innerHTML = '';
+    }
+
     if (balance === 0) {
         alert("You are broke! Please refresh the page for a new balance.");
         return;
@@ -111,7 +126,10 @@ function startGame(betAmount) {
 
     bet[0] = betAmount;
 
+    currentHand = 0; // set currentHand variable
+
     gameStarted = true; // set gameStarted variable
+    
     const startButtonContainer = document.getElementById('start-button-container');
     const gameButtonContainer = document.getElementById('game-button-container');
     startButtonContainer.style.display = gameStarted ? 'none' : 'block'; // Hide or show the start button based on gameStarted variable
