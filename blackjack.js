@@ -318,29 +318,29 @@ async function endGame() {
         if (playerTotal > 21) {
             balance -= playerBet;
             updateBalance(balance);
-            message += i +' Player Busts! Dealer Wins!\n';
+            message += 'Player Busts! Dealer Wins!\n';
             outcomeColor = 'red';
             outcomeText = -playerBet;
         } else if (dealerTotal > 21) {
             balance += playerBet;
             updateBalance(balance);
-            message += i +' Dealer Busts! Player Wins!\n';
+            message += 'Dealer Busts! Player Wins!\n';
             outcomeColor = 'green';
             outcomeText = playerBet;
         } else if (playerTotal === dealerTotal) {
-            message += i +' Push!\n';
+            message += 'Push!\n';
             outcomeColor = 'grey';
             outcomeText = '0';
         } else if (playerTotal > dealerTotal) {
             balance += playerBet;
             updateBalance(balance);
-            message += i +' Player Wins!\n';
+            message += 'Player Wins!\n';
             outcomeColor = 'green';
             outcomeText = playerBet;
         } else {
             balance -= playerBet;
             updateBalance(balance);
-            message += i +' Dealer Wins!\n';
+            message += 'Dealer Wins!\n';
             outcomeColor = 'red';
             outcomeText = -playerBet;
         }
