@@ -205,7 +205,7 @@ function displayHand(hand, elementId) {
     const handName = elementId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     totalDisplay.classList.add('hand-total-display');
     if (index === currentHand) {
-        totalDisplay.style.border = '2px solid crimson'; // Add bold crimson border if index equals currentHand
+        totalDisplay.style.border = '4px solid crimson'; // Add bold crimson border if index equals currentHand
     }
     totalDisplay.innerHTML = `<strong>${handName}</strong><br><br><span style="text-align: left;">Total Value: ${totalValue}</span><br><br><span style="text-align: left;">Bet: $${bet[index]}</span>`;
     handDiv.appendChild(totalDisplay);
