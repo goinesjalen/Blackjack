@@ -73,14 +73,22 @@ function updateBalance(balance) {
 
 // Function to double down
 function doubleDown() {
-    if (bet[currentHand] * 2 > balance) {
+    if ((bet[currentHand] + sumOfAllBets()) > balance) {
         alert("You cannot bet more than your current balance.");
         return;
     }
-    bet[currentHand] = bet[currentHand] * 2
+    bet[currentHand] = bet[currentHand] * 2;
     playerHand[currentHand].push(dealCard());
     updateDisplay();
     stand();
+}
+
+function sumOfAllBets() {
+    let sum = 0;
+    for (let i = 0; i < bet.length; i++) {
+        sum += bet[i];
+    }
+    return sum;
 }
 
 // Function to start the game
@@ -248,7 +256,7 @@ function dealerLogic() {
 }
 
 function split() {
-    if (bet[currentHand] * 2 > balance) {
+    if (bet[currentHand] + sumOfAllBets() > balance) {
         alert("You cannot bet more than your current balance.");
         return;
     }
