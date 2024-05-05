@@ -16,7 +16,9 @@
     /* Stack hands vertically */
 }
 
-#player-hand,
+#player-hand-0,
+#player-hand-1,
+#player-hand-2,
 #dealer-hand {
     padding: 5px;
     display: flex;

@@ -1,8 +1,8 @@
 // Define the deck of cards
 let balance = 500;
-let bet = 0;
+let bet = [0];
+let currentHand = 0;
 let gameStarted = false;
-let playerStood = false;
 let deck = [];
 const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
@@ -72,17 +72,15 @@ function updateBalance(balance) {
 }
 
 // Function to double down
-function doubleDown(hand) {
-    if(bet * 2 > balance){
+function doubleDown() {
+    if (bet[currentHand] * 2 > balance) {
         alert("You cannot bet more than your current balance.");
         return;
     }
-
-    bet = bet * 2
-
-    hand.push(dealCard());
+    bet[currentHand] = bet[currentHand] * 2
+    playerHand[currentHand].push(dealCard());
     updateDisplay();
-    endGame();
+    stand();
 }
 
 // Function to start the game
@@ -103,20 +101,19 @@ function startGame(betAmount) {
         return;
     }
 
-    bet = betAmount;
+    bet[0] = betAmount;
 
     gameStarted = true; // set gameStarted variable
-    playerStood = false; // Set playerStood variable
     const startButtonContainer = document.getElementById('start-button-container');
     const gameButtonContainer = document.getElementById('game-button-container');
     startButtonContainer.style.display = gameStarted ? 'none' : 'block'; // Hide or show the start button based on gameStarted variable
     gameButtonContainer.style.display = gameStarted ? 'block' : 'none'; // Hide or show the game button(s) based on gameStarted variable
     createDeck();
     shuffleDeck();
-    playerHand = [dealCard(), dealCard()];
+    playerHand = [[dealCard(), dealCard()]];
     dealerHand = [dealCard(), dealCard()];
     updateDisplay();
-    if (calculateHandValue(playerHand) == 21 | calculateHandValue(dealerHand) == 21) {
+    if (calculateHandValue(playerHand[0]) == 21 | calculateHandValue(dealerHand) == 21) {
         endGame();
     }
 
@@ -124,13 +121,41 @@ function startGame(betAmount) {
 
 // Function to update the display
 function updateDisplay() {
-    if (gameStarted && playerStood) {
-        displayHand(dealerHand, 'dealer-hand');
-    } else {
-        // Otherwise, only display the dealer's first card and its total value
-        displayFirstDealerCard();
-    }
-    displayHand(playerHand, 'player-hand');
+    displayFirstDealerCard();
+    // Iterate over each hand in playerHand array and display it
+    playerHand.forEach((hand, index) => {
+        displayHand(hand, `player-hand-${index}`);
+    });
+}
+
+function displayDealer() {
+    const elementId = 'dealer-hand';
+    const handDiv = document.getElementById(elementId);
+    handDiv.innerHTML = '';
+
+    // Create total display box
+    const totalValue = calculateHandValue(dealerHand);
+    const totalDisplay = document.createElement('div');
+    const handName = elementId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    totalDisplay.classList.add('hand-total-display');
+    totalDisplay.innerHTML = `<strong>${handName}</strong><br><br><span style="text-align: left;">Total Value: ${totalValue}</span>`;
+    handDiv.appendChild(totalDisplay);
+
+    dealerHand.forEach(card => {
+        const cardContainer = document.createElement('div');
+        cardContainer.classList.add('card-container');
+
+        const img = document.createElement('img');
+        img.src = `/Blackjack/png/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
+        img.classList.add('card');
+        cardContainer.appendChild(img);
+
+        const cardName = document.createElement('div');
+        cardName.textContent = `${card.value} of ${card.suit}`;
+        cardContainer.appendChild(cardName);
+
+        handDiv.appendChild(cardContainer);
+    });
 }
 
 function displayFirstDealerCard() {
@@ -162,7 +187,7 @@ function displayFirstDealerCard() {
 
 // Function to display a hand with card images and total value
 function displayHand(hand, elementId) {
-    console.log(elementId)
+    const index = parseInt(elementId.split('-')[2]);
     const handDiv = document.getElementById(elementId);
     handDiv.innerHTML = '';
 
@@ -171,7 +196,10 @@ function displayHand(hand, elementId) {
     const totalDisplay = document.createElement('div');
     const handName = elementId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     totalDisplay.classList.add('hand-total-display');
-    totalDisplay.innerHTML = `<strong>${handName}</strong><br><br><span style="text-align: left;">Total Value: ${totalValue}</span>`;
+    if (index === currentHand) {
+        totalDisplay.style.border = '2px solid crimson'; // Add bold crimson border if index equals currentHand
+    }
+    totalDisplay.innerHTML = `<strong>${handName}</strong><br><br><span style="text-align: left;">Total Value: ${totalValue}</span><br><br><span style="text-align: left;">Bet: $${bet[index]}</span>`;
     handDiv.appendChild(totalDisplay);
 
     hand.forEach(card => {
@@ -192,24 +220,55 @@ function displayHand(hand, elementId) {
 }
 
 // Function to add a new card to a hand
-function hit(hand) {
-    hand.push(dealCard());
+function hit() {
+    playerHand[currentHand].push(dealCard());
     updateDisplay();
-    if (calculateHandValue(hand) >= 21) {
-        endGame();
-        return true;
+    if (calculateHandValue(playerHand[currentHand]) >= 21) {
+        stand();
     }
-    return false;
 }
 
 function stand() {
-    playerStood = true;
-    updateDisplay();
+    if (currentHand < playerHand.length - 1) {
+        // If the current hand is not the last hand, increment currentHand
+        currentHand++;
+        updateDisplay();
+    } else {
+        // If it is the last hand, call endGame()
+        endGame();
+    }
+}
+
+function dealerLogic() {
     while (calculateHandValue(dealerHand) < 17 || (calculateHandValue(dealerHand) === 17 && hasSoft17(dealerHand))) {
         dealerHand.push(dealCard());
-        updateDisplay();
     }
-    endGame();
+    displayDealer();
+    return calculateHandValue(dealerHand);
+}
+
+function split() {
+    if (bet[currentHand] * 2 > balance) {
+        alert("You cannot bet more than your current balance.");
+        return;
+    }
+    if (playerHand.length > 2) {
+        alert("You cannot have more than three active hands.");
+        return;
+    }
+    const card1 = playerHand[currentHand][0];
+    const card2 = playerHand[currentHand][1];
+    if (card1.value !== card2.value) {
+        alert("You can only split if the two cards have the same rank.");
+        return;
+    }
+
+    hand1 = [card1, dealCard()];
+    hand2 = [card2, dealCard()];
+    playerHand[currentHand] = hand1;
+    playerHand.push(hand2);
+    bet.push(bet[currentHand]);
+    updateDisplay();
 }
 
 function hasSoft17(hand) {
@@ -230,87 +289,106 @@ async function endGame() {
     document.getElementById('start-button-container').style.display = 'block'; // Hide or show the start button based on gameStarted variable
     document.getElementById('game-button-container').style.display = 'none'; // Hide or show the game button(s) based on gameStarted variable
 
-    const playerTotal = calculateHandValue(playerHand);
-    const dealerTotal = calculateHandValue(dealerHand);
+    let runDealerLogic = false;
 
-    let message = '';
-    let outcomeColor = '';
-    let outcomeText = '';
-
-    if (playerTotal > 21) {
-        balance -= bet;
-        updateBalance(balance);
-        message = 'Player Busts! Dealer Wins!';
-        outcomeColor = 'red';
-        outcomeText = -bet;
-    } else if (dealerTotal > 21) {
-        balance += bet;
-        updateBalance(balance);
-        message = 'Dealer Busts! Player Wins!';
-        outcomeColor = 'green';
-        outcomeText = bet;
-    } else if (playerTotal === dealerTotal) {
-        message = 'Push!';
-        outcomeColor = 'grey';
-        outcomeText = '0';
-    } else if (playerTotal > dealerTotal) {
-        balance += bet;
-        updateBalance(balance);
-        message = 'Player Wins!';
-        outcomeColor = 'green';
-        outcomeText = bet;
-    } else {
-        balance -= bet;
-        updateBalance(balance);
-        message = 'Dealer Wins!';
-        outcomeColor = 'red';
-        outcomeText = -bet;
+    // Check if any hand has a value under 22
+    for (let i = 0; i < playerHand.length; i++) {
+        const playerTotal = calculateHandValue(playerHand[i]);
+        if (playerTotal <= 21) {
+            runDealerLogic = true;
+            break;
+        }
     }
 
-    const endMessageDiv = document.createElement('div');
-    endMessageDiv.style.display = playerStood = 'block';
-    endMessageDiv.textContent = message;
-    endMessageDiv.classList.add('end-message-div');
-    document.getElementById('playing-area').appendChild(endMessageDiv);
-    updateDisplay();
-
-    const gameOutcomeData = {
-        result: outcomeText >= 0 ? 'W' : 'L', // 'W' for win, 'L' for loss
-        description: message, // 'Player Busts! Dealer Wins!', etc.
-        wager: outcomeText // The amount won/lost
-    };
-
-    try {
-        const response = await axios.post('https://sheetdb.io/api/v1/0kmejh0iur6l8', gameOutcomeData);
-        console.log(response.data); // Log the response from the API (optional)
-    } catch (error) {
-        console.error('Error posting game outcome data:', error);
+    if (runDealerLogic) {
+        dealerLogic();
     }
 
-    // Append the outcome element to 'last10GamesList'
-    const outcomeElement = document.createElement('div');
-    outcomeElement.classList.add('color');
-    outcomeElement.style.background = outcomeColor;
-    outcomeElement.style.border = '1.5px solid #333';
-    const spanElement = document.createElement('span');
-    spanElement.textContent = outcomeText;
-    outcomeElement.appendChild(spanElement);
+    let dealerTotal = calculateHandValue(dealerHand);
 
-    // Check if there are already ten elements in 'last10GamesList', remove the oldest one if there are
-    const last10GamesList = document.getElementById('last10GamesList');
-    if (last10GamesList.children.length >= 10) {
-        last10GamesList.removeChild(last10GamesList.children[last10GamesList.children.length - 2]);
+    for (let i = 0; i <= playerHand.length - 1; i++) {
+        playerTotal = calculateHandValue(playerHand[i]);
+        playerBet = bet[i]
+
+        let message = '';
+        let outcomeColor = '';
+        let outcomeText = '';
+
+
+        if (playerTotal > 21) {
+            balance -= playerBet;
+            updateBalance(balance);
+            message += i +' Player Busts! Dealer Wins!\n';
+            outcomeColor = 'red';
+            outcomeText = -playerBet;
+        } else if (dealerTotal > 21) {
+            balance += playerBet;
+            updateBalance(balance);
+            message += i +' Dealer Busts! Player Wins!\n';
+            outcomeColor = 'green';
+            outcomeText = playerBet;
+        } else if (playerTotal === dealerTotal) {
+            message += i +' Push!\n';
+            outcomeColor = 'grey';
+            outcomeText = '0';
+        } else if (playerTotal > dealerTotal) {
+            balance += playerBet;
+            updateBalance(balance);
+            message += i +' Player Wins!\n';
+            outcomeColor = 'green';
+            outcomeText = playerBet;
+        } else {
+            balance -= playerBet;
+            updateBalance(balance);
+            message += i +' Dealer Wins!\n';
+            outcomeColor = 'red';
+            outcomeText = -playerBet;
+        }
+
+        const endMessageDiv = document.createElement('div');
+        endMessageDiv.textContent = message;
+        endMessageDiv.classList.add('end-message-div');
+        document.getElementById('playing-area').appendChild(endMessageDiv);
+
+        const gameOutcomeData = {
+            result: outcomeText >= 0 ? 'W' : 'L', // 'W' for win, 'L' for loss
+            description: message, // 'Player Busts! Dealer Wins!', etc.
+            wager: outcomeText // The amount won/lost
+        };
+
+        try {
+            const response = await axios.post('https://sheetdb.io/api/v1/0kmejh0iur6l8', gameOutcomeData);
+            console.log(response.data); // Log the response from the API (optional)
+        } catch (error) {
+            console.error('Error posting game outcome data:', error);
+        }
+
+        // Append the outcome element to 'last10GamesList'
+        const outcomeElement = document.createElement('div');
+        outcomeElement.classList.add('color');
+        outcomeElement.style.background = outcomeColor;
+        outcomeElement.style.border = '1.5px solid #333';
+        const spanElement = document.createElement('span');
+        spanElement.textContent = outcomeText;
+        outcomeElement.appendChild(spanElement);
+
+        // Check if there are already ten elements in 'last10GamesList', remove the oldest one if there are
+        const last10GamesList = document.getElementById('last10GamesList');
+        if (last10GamesList.children.length >= 10) {
+            last10GamesList.removeChild(last10GamesList.children[last10GamesList.children.length - 2]);
+        }
+        // Insert the outcomeElement before the last child
+        last10GamesList.appendChild(outcomeElement);
+
+        const last10GamesListContainer = document.getElementById('last10GamesListContainer');
+        last10GamesListContainer.style.display = 'block';
+
+        endMessageDiv.style.display = 'block';
+
+        setTimeout(() => {
+            endMessageDiv.style.display = 'none';
+        }, 3000);
     }
-
     gameStarted = false;
 
-    // Insert the outcomeElement before the last child
-    last10GamesList.appendChild(outcomeElement);
-
-    const last10GamesListContainer = document.getElementById('last10GamesListContainer');
-    last10GamesListContainer.style.display = 'block';
-
-    setTimeout(() => {
-        endMessageDiv.style.display = 'none';
-    }, 5000);
 }
