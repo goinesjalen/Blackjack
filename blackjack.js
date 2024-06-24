@@ -379,7 +379,8 @@ async function endGame() {
         const gameOutcomeData = {
             result: outcomeText >= 0 ? 'W' : 'L', // 'W' for win, 'L' for loss
             description: message, // 'Player Busts! Dealer Wins!', etc.
-            wager: outcomeText // The amount won/lost
+            wager: outcomeText, // The amount won/lost
+            timestamp: new Date().toISOString() // Current time in UTC
         };
 
         try {
