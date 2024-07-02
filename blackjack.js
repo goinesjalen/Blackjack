@@ -3,6 +3,7 @@ let balance = 500;
 let bet = [0];
 let gameStarted = false;
 let deck = [];
+let recommendedMove = '';
 const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
 
@@ -145,13 +146,85 @@ function startGame(betAmount) {
 
 }
 
+function getBlackjackStrategy(hand) {
+    const playerTotal = calculateHandValue(hand);
+    const dealerValue = getCardValue(dealerHand[0]);
+
+    // Convert playerHand to string array of card values for easy comparison
+    const playerValues = hand.map(card => card.value);
+    const hasAce = playerValues.includes('Ace');
+    const hasPairOfEights = playerValues.filter(value => value === '8').length === 2;
+    const hasPairOfAces = playerValues.filter(value => value === 'Ace').length === 2;
+    const hasPairOfTens = playerValues.filter(value => ['10', 'Jack', 'Queen', 'King'].includes(value)).length === 2;
+
+    console.log(playerTotal, dealerValue);
+
+    // Stand on hard 17 or higher
+    if (playerTotal >= 17 && (!hasAce || playerTotal > 17)) {
+        return "Stand on hard 17 or higher";
+    }
+
+    // Double down on 11
+    if (playerTotal === 11 && playerHand.length === 2) {
+        return "Double down on 11";
+    }
+
+    // Split 8s and Aces
+    if (hasPairOfEights) {
+        return "Split 8s";
+    }
+
+    if (hasPairOfAces) {
+        return "Split Aces";
+    }
+
+    // Never split 10s
+    if (hasPairOfTens) {
+        return "Never split 10s";
+    }
+
+    // Hit on Ace-7 (soft 18) if dealer's upcard is 9, 10, or Ace
+    if (playerTotal === 18 && hasAce) {
+        if (dealerValue === 9 || dealerValue === 10 || dealerValue === 11) {
+            return "Hit on Ace-7 (soft 18) if dealer's upcard is 9, 10, or Ace";
+        }
+    }
+
+    // Stand with 12 on dealer's 4, 5, or 6
+    if (playerTotal === 12) {
+        if (dealerValue === 4 || dealerValue === 5 || dealerValue === 6) {
+            return "Stand with 12 on dealer's 4, 5, or 6";
+        } else {
+            return "Default action is to hit";
+        }
+    }
+
+    // Stand with 13-16 on dealer's 2-6
+    if (playerTotal >= 13 && playerTotal <= 16) {
+        if (dealerValue >= 2 && dealerValue <= 6) {
+            return "Stand with 13-16 on dealer's 2-6";
+        } else {
+            return "Default action is to hit";
+        }
+    }
+
+    // Default action is to hit
+    return "Default action is to hit";
+}
+
 // Function to update the display
 function updateDisplay() {
     displayFirstDealerCard();
     // Iterate over each hand in playerHand array and display it
     playerHand.forEach((hand, index) => {
         displayHand(hand, `player-hand-${index}`);
+        recommendedMove = getBlackjackStrategy(hand);
     });
+}
+
+// Function to display recommended move
+function displayRecommendedMove() {
+    alert(recommendedMove);
 }
 
 function displayDealer() {

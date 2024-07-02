@@ -60,6 +60,24 @@
     margin-bottom: 5px;
 }
 
+.textBox {
+    display: inline-block;
+    padding: 12px 28px;
+    margin: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #667;
+    /* Dark grey background color */
+    border: none;
+    border-radius: 40px;
+    box-shadow: 0px 4px 0px #333;
+    /* Dark grey shadow */
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
 .button {
     display: inline-block;
     padding: 12px 28px;
